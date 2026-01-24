@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector> // For managing multiple heroes
 #include <random> 
 #include <ctime>
 
@@ -42,65 +43,78 @@ public:
 
     void reduceCourage(int amount) {
         courage -= amount;
-        if (courage < 0) courage = 0; // make sure courage doesnt go negative.
-
+        if (courage < 0) courage = 0; // Ensure courage doesn't go negative
     }
 };
 
 void sendHeroOnQuest(Userhero& hero) {
-
     int strength = hero.getStrength();
     int outcome = rand() % 100 + 1;
 
     string result;
     int courageLoss;
 
-    //the more negative the result the more courage is lost more strength means better chances of sucess for next quest.
+    // The more negative the result, the more courage is lost. More strength means better chances of success.
     if (outcome <= strength) {
-        result = "Sucess!";
+        result = "Success!";
         courageLoss = 5;
-
-    }
-    else if (outcome <= strength + 30) {
+    } else if (outcome <= strength + 30) {
         result = "Neutral.";
         courageLoss = 10;
-
-    }
-    else if (outcome <= strength + 60) {
+    } else {
         result = "Failure!";
         courageLoss = 20;
     }
     hero.reduceCourage(courageLoss);
 
-
-    //Print result
-    cout << hero.getName() << " Went on a quest. Result: " << result << endl;
-
-
+    // Print result
+    cout << hero.getName() << " went on a quest. Result: " << result << endl;
 }
 
 int main() {
     srand(static_cast<unsigned int>(time(0))); // Seed for random number generation
 
-    Userhero hero("Torvic");
-    cout << "Name: " << hero.getName() << endl;
-    cout << "Strength: " << hero.getStrength() << endl;
-    cout << "Courage: " << hero.getCourage() << endl;
+    // Create multiple heroes
+    vector<Userhero> heroes = {
+        Userhero("Torvic"),
+        Userhero("David"),
+        Userhero("Hulk"),
+        Userhero("Muny")
+    };
 
-    // Hero attends training for 5 units of time
-    hero.attendTraining(5);
-    cout << "After training, Strength: " << hero.getStrength() << endl;
+    // Display initial stats for all heroes
+    for (const auto& hero : heroes) {
+        cout << "Name: " << hero.getName() << ", Strength: " << hero.getStrength()
+             << ", Courage: " << hero.getCourage() << endl;
+    }
 
+    cout << endl;
 
-    // Hero attends therapy
-    hero.attendTherapy();
-    cout << "After therapy, Courage: " << hero.getCourage() << endl;
+    // Train all heroes
+    for (auto& hero : heroes) {
+        hero.attendTraining(5); // Train each hero for 5 units of time
+    }
 
+    // Display stats after training
+    cout << "After training:" << endl;
+    for (const auto& hero : heroes) {
+        cout << "Name: " << hero.getName() << ", Strength: " << hero.getStrength()
+             << ", Courage: " << hero.getCourage() << endl;
+    }
 
-    //send hero on a quest
-    sendHeroOnQuest(hero);
-    cout << "after quest, Courage: " << hero.getCourage() << endl;
+    cout << endl;
 
+    // Send all heroes on quests
+    for (auto& hero : heroes) {
+        sendHeroOnQuest(hero);
+    }
+
+    // Display stats after quests
+    cout << "After quests:" << endl;
+    for (const auto& hero : heroes) {
+        cout << "Name: " << hero.getName() << ", Strength: " << hero.getStrength()
+             << ", Courage: " << hero.getCourage() << endl;
+    }
 
     return 0;
 }
